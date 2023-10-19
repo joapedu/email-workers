@@ -1,4 +1,4 @@
-## Serviços para o projeto Email-Workers
+# Serviços para o projeto Email-Workers
 # Repositório disponível em https://github.com/joapedu
 
 # Vide README para mais informações(conceito, uso, execução)
@@ -8,26 +8,30 @@
 # Email do proprietário: joaoeduardobraga2@gmail.com
 
 version: '3'
+
 volumes:
   dados:
 
 services:
+
+# Banco de dados
   db:
-  ## Versão fixa para maior nível de compactabilidade
+  # Versão fixa para maior nível de compactabilidade
     image: postgres:9.6
 
     volumes:
-    ## Volumes dos dados
+    # Volumes dos dados
       - dados:/var/lib/postgresql/data
-    ## Scripts
+    # Scripts
       - ./scripts:/scripts
-      ## Esse padrão foi extraido de https://hub.docker.com/_/postgres
+      # Esse padrão foi extraido de https://hub.docker.com/_/postgres
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  ## Variável de ambiente para bypassar metodo de segurança de superusuário --important!
+  # Variável de ambiente para bypassar metodo de segurança de superusuário --important!
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
 
+# Front end
   frontend:
     image: nginx:1.13
     volumes:
@@ -35,3 +39,16 @@ services:
       - ./web:/usr/share/nginx/html/
     ports:
       - 80:80
+
+# Back end
+  app:
+    image: python:3.6
+    volumes:
+      # Aplicação
+      - ./app:/app
+    working_dir: /app
+    
+    # "Bash" por questão de permissão a um pipeline .sh
+    command: bash ./app.sh
+    ports:
+      - 8080:8080
