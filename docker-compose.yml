@@ -12,26 +12,34 @@ version: '3'
 volumes:
   dados:
 
-services:
 
-# Banco de dados
+networks:
+  banco:
+  web:
+
+
+services:
+  # Banco de dados
   db:
-  # Versão fixa para maior nível de compactabilidade
+    # Versão fixa para maior nível de compactabilidade
     image: postgres:9.6
 
     volumes:
-    # Volumes dos dados
+      # Volumes dos dados
       - dados:/var/lib/postgresql/data
-    # Scripts
+      # Scripts
       - ./scripts:/scripts
       # Esse padrão foi extraido de https://hub.docker.com/_/postgres
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  # Variável de ambiente para bypassar metodo de segurança de superusuário --important!
+    # Variável de ambiente para bypassar metodo de segurança de superusuário --important!
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
 
-# Front end
+    networks:
+      - banco
+
+  # Front end
   frontend:
     image: nginx:1.13
     volumes:
@@ -41,8 +49,13 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 80:80
+    networks:
+      - web
+    depends_on:
+      # Orquestrar a inicilização do serviço
+      - app
 
-# Back end
+  # Back end
   app:
     image: python:3.6
     volumes:
@@ -52,3 +65,11 @@ services:
 
     # "bash" por questão de permissão a pipelines .sh no container
     command: bash ./app.sh
+
+    networks:
+      - banco
+      - web
+
+    depends_on:
+      # Orquestrar a inicilização do serviço
+      - db
