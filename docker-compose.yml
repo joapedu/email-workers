@@ -1,0 +1,29 @@
+## Serviços para o projeto Email-Workers
+# Repositório disponível em https://github.com/joapedu
+
+# Vide README para mais informações(conceito, uso, execução)
+# Vide LICENSE para licença de uso
+# Vide CONTRIBUTING para prática de adição de código externo ao projeto.
+
+# Email do proprietário: joaoeduardobraga2@gmail.com
+
+version: '3'
+volumes:
+  dados:
+
+services:
+  db:
+  ## Versão fixa para maior nível de compactabilidade
+    image: postgres:9.6
+
+    volumes:
+    ## Volumes dos dados
+      - dados:/var/lib/postgresql/data
+    ## Scripts
+      - ./scripts:/scripts
+      ## Esse padrão foi extraido de https://hub.docker.com/_/postgres
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  ## Variável de ambiente para bypassar metodo de segurança de superusuário --important!
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
