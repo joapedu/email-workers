@@ -1,0 +1,7 @@
+## Override do docker para transpor as variáveis de ambiente
+
+version: '3'
+services:
+  app:
+    environment:
+      - DB_NAME=email_sender

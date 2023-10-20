@@ -77,7 +77,7 @@ services:
       - queue
 
     environment:
-      - DB_NAME=email_sender
+      - DB_NAME=abc_sender
   
   # Fila
   queue:
