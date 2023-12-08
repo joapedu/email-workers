@@ -20,8 +20,7 @@ class Sender(Bottle):
             self.conn = psycopg2.connect(dsn)
 
         except Exception as e:
-            print(f'Erro ao inicializar: {e}')
-            # Você pode adicionar ações adicionais de tratamento de erro aqui
+            print(f'Erro ao inicializar banco de dados: {e}')
 
     def register_message(self, assunto, mensagem):
         try:
@@ -37,8 +36,7 @@ class Sender(Bottle):
             print(' Mensagem registrada! ')
         
         except Exception as e:
-            print(f'Erro ao registrar mensagem: {e}')
-            # Adicione ações adicionais de tratamento de erro aqui
+            print(f'Erro ao inserir mensagem no sistema, tente novamente em alguns minutos: {e}')
 
     def send(self):
         try:
@@ -52,7 +50,7 @@ class Sender(Bottle):
             )
         
         except Exception as e:
-            return f'Erro ao processar a solicitação: {e}'
+            return f'Erro ao processar a solicitação - Tabela não existe: {e}'
 
 if __name__ == '__main__':
     sender = Sender()
