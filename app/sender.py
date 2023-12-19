@@ -2,7 +2,6 @@ import psycopg2
 import redis
 import json
 import os
-import logging
 from bottle import Bottle, request
 
 class Sender(Bottle):
@@ -21,24 +20,23 @@ class Sender(Bottle):
             self.conn = psycopg2.connect(dsn)
 
         except Exception as e:
-            logging.error(f'Erro ao inicializar banco de dados: {e}')
-            raise
+            print(f'Erro ao inicializar banco de dados: {e}')
 
     def register_message(self, assunto, mensagem):
         try:
-            with self.conn.cursor() as cur:
-                SQL = 'INSERT INTO emails (assunto, mensagem) VALUES (%s, %s)'
-                cur.execute(SQL, (assunto, mensagem))
-                self.conn.commit()
+            SQL = 'INSERT INTO emails (assunto, mensagem) VALUES (%s, %s)'
+            cur = self.conn.cursor()
+            cur.execute(SQL, (assunto, mensagem))
+            self.conn.commit()
+            cur.close()
 
-                msg = {'assunto': assunto, 'mensagem': mensagem}
-                self.fila.rpush('sender', json.dumps(msg))
+            msg = {'assunto': assunto, 'mensagem': mensagem}
+            self.fila.rpush('sender', json.dumps(msg))
 
-                logging.info('Mensagem registrada!')
+            print(' Mensagem registrada! ')
         
         except Exception as e:
-            logging.error(f'Erro ao inserir mensagem no sistema, tente novamente em alguns minutos: {e}')
-            raise
+            print(f'Erro ao inserir mensagem no sistema, tente novamente em alguns minutos: {e}')
 
     def send(self):
         try:
@@ -47,16 +45,13 @@ class Sender(Bottle):
 
             self.register_message(assunto, mensagem)
 
-            return 'Mensagem enfileirada! Assunto: {} Mensagem: {}'.format(
+            return 'Mensagem enfileirada ! Assunto: {} Mensagem: {}'.format(
                 assunto, mensagem
             )
         
         except Exception as e:
-            logging.error(f'Erro ao processar a solicitação - Tabela não existe: {e}')
-            return 'Erro ao processar a solicitação - Tabela não existe.'
-
+            return f'Erro ao processar a solicitação - Tabela não existe: {e}'
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     sender = Sender()
     sender.run(host='0.0.0.0', port=8080, debug=True)
