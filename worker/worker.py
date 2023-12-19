@@ -11,7 +11,7 @@ def send_email(mensagem):
         sleep(randint(15, 30))
         print('Mensagem', mensagem['assunto'], 'enviada')
     except Exception as e:
-        print(f'Erro ao enviar e-mail: {e}')
+        print(f'Erro ao enviar, verifique se a fila dos workers está cheia: {e}')
 
 if __name__ == '__main__':
     try:
@@ -22,4 +22,4 @@ if __name__ == '__main__':
             mensagem = json.loads(r.blpop('sender')[1])
             send_email(mensagem)
     except Exception as e:
-        print(f'Erro ao aguardar mensagens: {e}')
+        print(f'Não foi possível gerar as mensagens: {e}')

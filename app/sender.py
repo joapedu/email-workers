@@ -37,7 +37,7 @@ class Sender(Bottle):
                 logging.info('Mensagem registrada!')
         
         except Exception as e:
-            logging.error(f'Erro ao inserir mensagem no sistema: {e}')
+            logging.error(f'Erro ao inserir mensagem no sistema, tente novamente em alguns minutos: {e}')
             raise
 
     def send(self):
@@ -52,8 +52,9 @@ class Sender(Bottle):
             )
         
         except Exception as e:
-            logging.error(f'Erro ao processar a solicitação: {e}')
-            return 'Erro ao processar a solicitação.'
+            logging.error(f'Erro ao processar a solicitação - Tabela não existe: {e}')
+            return 'Erro ao processar a solicitação - Tabela não existe.'
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
