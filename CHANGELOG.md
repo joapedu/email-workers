@@ -1,5 +1,8 @@
 ## Não publicada
+- :recycle: refactor: adicionando tratamento de erros ao código
 - :sparkles: feat: implementando registro de informações com logging [#12]
+- :sparkles: feat: utilizando o conceito de pool de conexões para o Redis [#14]
+
 
 ## Lastest Version
 ### 0.1.3 alpha:
