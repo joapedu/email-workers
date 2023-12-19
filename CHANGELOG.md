@@ -1,3 +1,6 @@
+## Não publicada
+- :sparkles: feat: implementando registro de informações com logging [#12]
+
 ## Lastest Version
 ### 0.1.3 alpha:
 
